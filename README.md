@@ -37,3 +37,66 @@ public class Test1 {
 }
 
 ```
+2) Observables
+```java
+import io.reactivex.rxjava3.annotations.NonNull;
+import io.reactivex.rxjava3.core.Observable;
+
+import io.reactivex.rxjava3.core.ObservableEmitter;
+import io.reactivex.rxjava3.core.ObservableOnSubscribe;
+import io.reactivex.rxjava3.core.Observer;
+import io.reactivex.rxjava3.disposables.Disposable;
+import io.reactivex.rxjava3.internal.operators.observable.ObservableCreate;
+
+public class Test {
+    // Basic Observable implementation
+    public static void main(String[] args) {
+        System.out.println("Hiii..");
+        Observable<Integer> source = new ObservableCreate<>(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(@NonNull ObservableEmitter<Integer> emitter) {
+                try {
+                    emitter.onNext(10);
+                    emitter.onNext(11);
+                    emitter.onComplete();
+                } catch (Exception e) {
+                    emitter.onError(e);
+                }
+            }
+        });
+        Observer<Integer> observer = new Observer<Integer>() {
+            @Override
+            public void onSubscribe(@NonNull Disposable d) {
+                System.out.println("On subscribe...");
+            }
+
+            @Override
+            public void onNext(@NonNull Integer nextInt) {
+                System.out.println("Next Int =" + nextInt);
+            }
+
+            @Override
+            public void onError(@NonNull Throwable e) {
+                e.printStackTrace();
+            }
+
+            @Override
+            public void onComplete() {
+                System.out.println("Completed....!");
+            }
+        };
+        source.subscribe(observer);
+    }
+}
+/*
+Hiii..
+On subscribe...
+Next Int =10
+Next Int =11
+Completed....!
+Disconnected from the target VM, address: '127.0.0.1:51375', transport: 'socket'
+
+Process finished with exit code 0
+*/
+
+```
